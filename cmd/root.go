@@ -1,16 +1,19 @@
 /*
 Copyright © 2025 NAME HERE <EMAIL ADDRESS>
-
 */
 package cmd
 
 import (
+	"encoding/csv"
+	"fmt"
+	"log"
 	"os"
 
+	"github.com/olekukonko/tablewriter"
 	"github.com/spf13/cobra"
 )
 
-
+var inputFile string
 
 // rootCmd represents the base command when called without any subcommands
 var rootCmd = &cobra.Command{
@@ -25,6 +28,10 @@ to quickly create a Cobra application.`,
 	// Uncomment the following line if your bare application
 	// has an action associated with it:
 	// Run: func(cmd *cobra.Command, args []string) { },
+
+	RunE: func(cmd *cobra.Command, args []string) error {
+		return run()
+	},
 }
 
 // Execute adds all child commands to the root command and sets flags appropriately.
@@ -45,7 +52,55 @@ func init() {
 
 	// Cobra also supports local flags, which will only run
 	// when this action is called directly.
-	rootCmd.Flags().BoolP("toggle", "t", false, "Help message for toggle")
+	rootCmd.Flags().StringVarP(
+		&inputFile,
+		"file",
+		"f",
+		"",
+		"読み込むファイルのパス（必須）",
+	)
+
+	// 必須フラグにする
+	rootCmd.MarkFlagRequired("file")
 }
 
+func run() error {
+	// tablewriter
+	file, err := os.Open(inputFile)
+	if err != nil {
+		log.Fatalf("Error: %v", err)
+	}
 
+	table := csv.NewReader(file)
+	records, err := table.ReadAll()
+	if err != nil {
+		return err
+	}
+
+	if len(records) == 0 {
+		return fmt.Errorf("CSV が空です")
+	}
+
+	header := records[0]
+	rows := records[1:]
+
+	renderTable(os.Stdout, header, rows)
+
+	return nil
+}
+
+func renderTable(w *os.File, header []string, rows [][]string) {
+	table := tablewriter.NewWriter(w)
+
+	table.SetHeader(header)
+	table.SetAlignment(tablewriter.ALIGN_LEFT)
+
+	// --- ASCII 固定（ズレ防止） ---
+	table.SetBorder(true)
+	table.SetCenterSeparator("|")
+	table.SetColumnSeparator("|")
+	table.SetRowSeparator("-")
+
+	table.AppendBulk(rows)
+	table.Render()
+}
