@@ -13,7 +13,7 @@ import (
 	"github.com/spf13/cobra"
 )
 
-var inputFile string
+var isMarkdown bool
 
 // rootCmd represents the base command when called without any subcommands
 var rootCmd = &cobra.Command{
@@ -57,6 +57,7 @@ func init() {
 
 	// Cobra also supports local flags, which will only run
 	// when this action is called directly.
+	rootCmd.Flags().BoolVarP(&isMarkdown, "markdown", "m", false, "Change format to Markdown.")
 }
 
 func run(f io.Reader) error {
@@ -72,9 +73,12 @@ func run(f io.Reader) error {
 
 	header := records[0]
 	rows := records[1:]
-
-	renderTable(os.Stdout, header, rows)
-
+	if isMarkdown {
+		renderMarkdown(os.Stdout, header, rows)
+	}else {
+		renderTable(os.Stdout, header, rows)
+	}
+	
 	return nil
 }
 
@@ -91,5 +95,15 @@ func renderTable(w *os.File, header []string, rows [][]string) {
 	table.SetRowSeparator("-")
 
 	table.AppendBulk(rows)
+	table.Render()
+}
+
+func renderMarkdown(w *os.File, header []string,rows [][]string) {
+	table := tablewriter.NewWriter(w)
+
+	table.SetHeader(header)
+	table.SetBorders(tablewriter.Border{Left: true, Top: false, Right: true, Bottom: false})
+	table.SetCenterSeparator("|")
+	table.AppendBulk(rows) // Add Bulk Data
 	table.Render()
 }
