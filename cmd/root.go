@@ -6,7 +6,7 @@ package cmd
 import (
 	"encoding/csv"
 	"fmt"
-	"log"
+	"io"
 	"os"
 
 	"github.com/olekukonko/tablewriter"
@@ -17,20 +17,25 @@ var inputFile string
 
 // rootCmd represents the base command when called without any subcommands
 var rootCmd = &cobra.Command{
-	Use:   "goctot",
-	Short: "A brief description of your application",
-	Long: `A longer description that spans multiple lines and likely contains
-examples and usage of using your application. For example:
-
-Cobra is a CLI library for Go that empowers applications.
-This application is a tool to generate the needed files
-to quickly create a Cobra application.`,
+	Use:   "goctot [file]",
+	Short: "This command displays a CSV file in a table format.",
+	Long: `This command displays a CSV file in a table format.`,
 	// Uncomment the following line if your bare application
 	// has an action associated with it:
 	// Run: func(cmd *cobra.Command, args []string) { },
-
 	RunE: func(cmd *cobra.Command, args []string) error {
-		return run()
+	if len(args) == 0 {
+			return cmd.Help()
+		}
+
+		// ここから通常処理
+		f, err := os.Open(args[0])
+		if err != nil {
+			return err
+		}
+		defer f.Close()
+
+	return run(f)
 	},
 }
 
@@ -52,26 +57,10 @@ func init() {
 
 	// Cobra also supports local flags, which will only run
 	// when this action is called directly.
-	rootCmd.Flags().StringVarP(
-		&inputFile,
-		"file",
-		"f",
-		"",
-		"読み込むファイルのパス（必須）",
-	)
-
-	// 必須フラグにする
-	rootCmd.MarkFlagRequired("file")
 }
 
-func run() error {
-	// tablewriter
-	file, err := os.Open(inputFile)
-	if err != nil {
-		log.Fatalf("Error: %v", err)
-	}
-
-	table := csv.NewReader(file)
+func run(f io.Reader) error {
+	table := csv.NewReader(f)
 	records, err := table.ReadAll()
 	if err != nil {
 		return err
