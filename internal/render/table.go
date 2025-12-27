@@ -1,12 +1,12 @@
 package render
 
 import (
-	"os"
+	"io"
 
 	"github.com/olekukonko/tablewriter"
 )
 
-func Table(w *os.File, header []string, rows [][]string) {
+func Table(w io.Writer, header []string, rows [][]string) {
 	table := tablewriter.NewWriter(w)
 
 	table.SetHeader(header)

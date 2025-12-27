@@ -11,6 +11,7 @@ import (
 )
 
 var isMarkdown bool
+var outputfile string
 
 var rootCmd = &cobra.Command{
 	Use:   "goctot [file]",
@@ -40,6 +41,7 @@ func Execute() {
 
 func init() {
 	rootCmd.Flags().BoolVarP(&isMarkdown, "markdown", "m", false, "Change format to Markdown.")
+	rootCmd.Flags().StringVarP(&outputfile, "output", "o", "","Specify the file to output from standard output.")
 }
 
 func run(f io.Reader) error {
@@ -53,12 +55,23 @@ func run(f io.Reader) error {
 		return fmt.Errorf("missing file argument")
 	}
 
+	var out io.Writer = os.Stdout
+
+	if outputfile != "" {
+		f, err := os.Create(outputfile)
+		if err != nil {
+			return err
+		}
+		defer f.Close()
+		out = f
+	}
+
 	header := records[0]
 	rows := records[1:]
 	if isMarkdown {
-		render.Markdown(os.Stdout, header, rows)
+		render.Markdown(out, header, rows)
 	}else {
-		render.Table(os.Stdout, header, rows)
+		render.Table(out, header, rows)
 	}
 	
 	return nil
