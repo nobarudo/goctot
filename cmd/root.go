@@ -20,7 +20,8 @@ var rootCmd = &cobra.Command{
 	Long: `This command displays a CSV file in a table format.`,
 	RunE: func(cmd *cobra.Command, args []string) error {
 	if len(args) == 0 {
-		return cmd.Help()
+		cmd.Help()
+		return nil
 	}
 
 	f, err := os.Open(args[0])
@@ -54,7 +55,7 @@ func run(f io.Reader) error {
 	}
 
 	if len(records) == 0 {
-		return fmt.Errorf("missing file argument")
+		return fmt.Errorf("CSV file is empty")
 	}
 
 	var out io.Writer = os.Stdout
