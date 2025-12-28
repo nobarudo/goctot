@@ -11,6 +11,7 @@ import (
 )
 
 var isMarkdown bool
+var isNoHeader bool
 var outputfile string
 
 var rootCmd = &cobra.Command{
@@ -19,14 +20,14 @@ var rootCmd = &cobra.Command{
 	Long: `This command displays a CSV file in a table format.`,
 	RunE: func(cmd *cobra.Command, args []string) error {
 	if len(args) == 0 {
-			return cmd.Help()
-		}
+		return cmd.Help()
+	}
 
-		f, err := os.Open(args[0])
-		if err != nil {
-			return err
-		}
-		defer f.Close()
+	f, err := os.Open(args[0])
+	if err != nil {
+		return err
+	}
+	defer f.Close()
 
 	return run(f)
 	},
@@ -40,7 +41,8 @@ func Execute() {
 }
 
 func init() {
-	rootCmd.Flags().BoolVarP(&isMarkdown, "markdown", "m", false, "Change format to Markdown.")
+	rootCmd.Flags().BoolVarP(&isMarkdown, "markdown", "m", false, "format to Markdown.")
+	rootCmd.Flags().BoolVarP(&isNoHeader, "no-header", "n", false, "no header option.")
 	rootCmd.Flags().StringVarP(&outputfile, "output", "o", "","Specify the file to output from standard output.")
 }
 
@@ -66,12 +68,18 @@ func run(f io.Reader) error {
 		out = f
 	}
 
-	header := records[0]
-	rows := records[1:]
 	if isMarkdown {
-		render.Markdown(out, header, rows)
+		if isNoHeader {
+			render.NoHeaderMarkdown(out, records)
+		} else {
+			render.Markdown(out, records)
+		}
 	}else {
-		render.Table(out, header, rows)
+		if isNoHeader {
+			render.NoHeaderTable(out, records)
+		} else {
+			render.Table(out, records)
+		}
 	}
 	
 	return nil
