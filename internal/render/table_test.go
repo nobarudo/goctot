@@ -10,20 +10,47 @@ import (
 
 func TestTable(t *testing.T) {
 	records := [][]string{
-		{"A", "B"},
-		{"1", "2"},
+		{"First Name", "Last Name", "SSN"},
+		{"John", "Barry", "123456"},
+		{"Kathy", "Smith", "687987"},
 	}
 
 	var buf bytes.Buffer
 	render.Table(&buf, records)
 
 	out := buf.String()
+	want := `|------------|-----------|--------|
+| FIRST NAME | LAST NAME |  SSN   |
+|------------|-----------|--------|
+| John       | Barry     | 123456 |
+| Kathy      | Smith     | 687987 |
+|------------|-----------|--------|`
 
-	if !strings.Contains(out, "A") {
-		t.Errorf("output should contain header")
-	}
-	if !strings.Contains(out, "1") {
-		t.Errorf("output should contain row data")
+	if !strings.Contains(out, want) {
+		t.Errorf("table display is corrupted")
+		t.Error(out)
 	}
 }
 
+func TestNoHeaderTable(t *testing.T) {
+		records := [][]string{
+		{"First Name", "Last Name", "SSN"},
+		{"John", "Barry", "123456"},
+		{"Kathy", "Smith", "687987"},
+	}
+
+	var buf bytes.Buffer
+	render.NoHeaderTable(&buf, records)
+
+	out := buf.String()
+	want := `|------------|-----------|--------|
+| First Name | Last Name | SSN    |
+| John       | Barry     | 123456 |
+| Kathy      | Smith     | 687987 |
+|------------|-----------|--------|`
+
+	if !strings.Contains(out, want) {
+		t.Errorf("table display is corrupted")
+		t.Error(out)
+	}
+}
