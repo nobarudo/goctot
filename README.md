@@ -16,6 +16,7 @@ If the command is not found, make sure `$HOME/go/bin` is in your PATH.
 goctot data.csv
 goctot data.csv -m
 goctot data.csv -m -o output.md
+cat data.csv | goctot
 ```
 
 ```

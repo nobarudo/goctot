@@ -14,24 +14,38 @@ var isMarkdown bool
 var isNoHeader bool
 var outputfile string
 
+func hasStdin() bool {
+	info, err := os.Stdin.Stat()
+	if err != nil {
+		return false
+	}
+	return (info.Mode() & os.ModeCharDevice) == 0
+}
+
 var rootCmd = &cobra.Command{
 	Use:   "goctot [file]",
 	Short: "This command displays a CSV file in a table format.",
 	Long: `This command displays a CSV file in a table format.`,
-	Args:  cobra.ExactArgs(1),
+	Args: cobra.ArbitraryArgs,
 	RunE: func(cmd *cobra.Command, args []string) error {
-	if len(args) == 0 {
-		cmd.Help()
-		return nil
-	}
+		switch {
+			// ファイル引数あり
+			case len(args) == 1:
+				f, err := os.Open(args[0])
+				if err != nil {
+					return err
+				}
+				defer f.Close()
+				return run(f)
 
-	f, err := os.Open(args[0])
-	if err != nil {
-		return err
-	}
-	defer f.Close()
+			// stdin が pipe
+			case len(args) == 0 && hasStdin():
+				return run(os.Stdin)
 
-	return run(f)
+			// それ以外（引数なし・stdinなし）
+			default:
+				return cmd.Help()
+		}
 	},
 }
 
