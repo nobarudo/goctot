@@ -18,6 +18,7 @@ var rootCmd = &cobra.Command{
 	Use:   "goctot [file]",
 	Short: "This command displays a CSV file in a table format.",
 	Long: `This command displays a CSV file in a table format.`,
+	Args:  cobra.ExactArgs(1),
 	RunE: func(cmd *cobra.Command, args []string) error {
 	if len(args) == 0 {
 		cmd.Help()
