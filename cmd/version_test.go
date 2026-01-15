@@ -18,7 +18,7 @@ func TestVersionCommand(t *testing.T) {
 	}
 
 	out := strings.TrimSpace(buf.String())
-	want := "goctot version 0.1.0"
+	want := "goctot version 0.1.1"
 
 	if out != want {
 		t.Errorf("unexpected output: %q", out)

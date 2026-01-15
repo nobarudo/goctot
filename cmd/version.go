@@ -12,7 +12,7 @@ var versionCmd = &cobra.Command{
 	Short: "display version",
 	Run: func(cmd *cobra.Command, args []string) {
 		// 最新のバージョンを表示する
-		fmt.Fprintln(cmd.OutOrStdout(),"goctot version 0.1.0")
+		fmt.Fprintln(cmd.OutOrStdout(),"goctot version 0.1.1")
 	},
 }
 
