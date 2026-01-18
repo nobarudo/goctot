@@ -1,4 +1,4 @@
-module goctot
+module github.com/nobarudo/goctot
 
 go 1.25.5
 
