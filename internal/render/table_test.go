@@ -5,7 +5,7 @@ import (
 	"strings"
 	"testing"
 
-	"goctot/internal/render"
+	"github.com/nobarudo/goctot/internal/render"
 )
 
 func TestTable(t *testing.T) {

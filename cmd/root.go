@@ -3,10 +3,11 @@ package cmd
 import (
 	"encoding/csv"
 	"fmt"
-	"goctot/internal/finder"
-	"goctot/internal/render"
 	"io"
 	"os"
+
+	"github.com/nobarudo/goctot/internal/finder"
+	"github.com/nobarudo/goctot/internal/render"
 
 	"github.com/spf13/cobra"
 )

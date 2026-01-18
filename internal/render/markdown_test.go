@@ -2,9 +2,10 @@ package render_test
 
 import (
 	"bytes"
-	"goctot/internal/render"
 	"strings"
 	"testing"
+
+	"github.com/nobarudo/goctot/internal/render"
 )
 
 func TestMarkdown(t *testing.T) {
