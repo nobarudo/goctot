@@ -16,6 +16,7 @@ If the command is not found, make sure `$HOME/go/bin` is in your PATH.
 goctot data.csv
 goctot data.csv -m
 goctot data.csv -m -o output.md
+goctot -d csvdir
 cat data.csv | goctot
 ```
 
@@ -27,6 +28,7 @@ goctot [command]
 ### Flags
 
 ```
+  -d, --directory       display all CSV files in a directory
   -h, --help            help for goctot
   -m, --markdown        format to Markdown.
   -n, --no-header       no header option.
